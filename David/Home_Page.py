@@ -6,9 +6,6 @@ import re
 
 DB_PATH = "med_helper.db"
 
-# ---------------------------
-# Page config + Blue theme CSS
-# ---------------------------
 st.set_page_config(page_title="Med Helper", page_icon="🩺", layout="wide")
 
 st.markdown(
@@ -184,9 +181,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ---------------------------
-# Persistence (SQLite)
-# ---------------------------
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -244,9 +238,6 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
 
-# ---------------------------
-# Anki helpers (fast rules, editable)
-# ---------------------------
 def split_lines(text: str):
     lines = [ln.strip() for ln in text.splitlines()]
     return [ln for ln in lines if ln]
@@ -289,9 +280,6 @@ def make_cloze_cards(lines):
 def df_to_tsv_bytes(df: pd.DataFrame):
     return df.to_csv(sep="\t", index=False).encode("utf-8")
 
-# ---------------------------
-# Init + Sidebar nav
-# ---------------------------
 init_db()
 
 st.sidebar.markdown("### Navigation")
@@ -310,9 +298,6 @@ st.sidebar.markdown(
 tasks = get_tasks()
 today = date.today()
 
-# ---------------------------
-# Dashboard
-# ---------------------------
 if page == "Dashboard":
     open_tasks = tasks[tasks["done"] == 0].copy() if not tasks.empty else tasks
     done_tasks = tasks[tasks["done"] == 1].copy() if not tasks.empty else tasks
@@ -416,9 +401,6 @@ if page == "Dashboard":
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------------------
-# Deadlines & Tasks
-# ---------------------------
 elif page == "Deadlines & Tasks":
     left, right = st.columns([1, 1], gap="large")
 
@@ -518,9 +500,7 @@ elif page == "Deadlines & Tasks":
 
                 st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------------------
-# Anki Helper
-# ---------------------------
+
 else:
     st.markdown('<div class="mh-card">', unsafe_allow_html=True)
     st.markdown("<h3>🧠 Anki Helper</h3>", unsafe_allow_html=True)
