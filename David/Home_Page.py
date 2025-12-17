@@ -257,27 +257,6 @@ st.markdown(
         -webkit-text-fill-color: #0f172a !important;
       }
 
-      /* Date picker popup (calendar) */
-      div[role="dialog"]{
-        background: #ffffff !important;
-        color: #0f172a !important;
-      }
-      div[role="dialog"] *{
-        color: #0f172a !important;
-      }
-      div[role="dialog"] button{
-        background: #ffffff !important;
-        color: #0f172a !important;
-        border-radius: 10px !important;
-      }
-      div[role="dialog"] button:hover{
-        background: #eff6ff !important;
-      }
-      div[role="dialog"] div[role="grid"] *{
-        background: transparent !important;
-        color: #0f172a !important;
-      }
-
       /* Number input stepper (+/-) */
       div[data-testid="stNumberInput"] button{
         background: #ffffff !important;
@@ -288,11 +267,45 @@ st.markdown(
         fill: #0f172a !important;
       }
 
+      /* ===== FORCE BaseWeb DatePicker calendar to light ===== */
+      div[data-baseweb="popover"],
+      div[data-baseweb="popover"] *{
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      div[data-baseweb="calendar"],
+      div[data-baseweb="calendar"] *{
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      div[data-baseweb="calendar"] [role="row"],
+      div[data-baseweb="calendar"] [role="row"] *{
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      div[data-baseweb="calendar"] [role="gridcell"],
+      div[data-baseweb="calendar"] [role="gridcell"] *{
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+
+      div[data-baseweb="calendar"] svg,
+      div[data-baseweb="popover"] svg{
+        fill: #0f172a !important;
+        color: #0f172a !important;
+      }
+
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# =========================
+# HEADER
+# =========================
 st.markdown(
     """
     <div class="mh-header">
@@ -303,6 +316,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# =========================
+# DB FUNCTIONS
+# =========================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -360,6 +376,9 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
 
+# =========================
+# ANKI HELPERS
+# =========================
 def split_lines(text: str):
     lines = [ln.strip() for ln in text.splitlines()]
     return [ln for ln in lines if ln]
@@ -392,7 +411,7 @@ def make_cloze_cards(lines):
                 candidates.append(w)
             elif len(w) >= 8:
                 candidates.append(w)
-        candidates = list(dict.fromkeys(candidates))  # unique, keep order
+        candidates = list(dict.fromkeys(candidates))
         clozed = ln
         for i, term in enumerate(candidates[:2], start=1):
             clozed = re.sub(rf"\\b{re.escape(term)}\\b", f"{{{{c{i}::{term}}}}}", clozed, count=1)
@@ -402,6 +421,9 @@ def make_cloze_cards(lines):
 def df_to_tsv_bytes(df: pd.DataFrame):
     return df.to_csv(sep="\\t", index=False).encode("utf-8")
 
+# =========================
+# APP
+# =========================
 init_db()
 
 st.sidebar.markdown("### Navigation")
@@ -425,7 +447,9 @@ if page == "Dashboard":
     done_tasks = tasks[tasks["done"] == 1].copy() if not tasks.empty else tasks
 
     due_7 = open_tasks[
-        (open_tasks["due_date"].notna()) & (open_tasks["due_date"] >= today) & (open_tasks["due_date"] <= today + timedelta(days=7))
+        (open_tasks["due_date"].notna())
+        & (open_tasks["due_date"] >= today)
+        & (open_tasks["due_date"] <= today + timedelta(days=7))
     ] if not open_tasks.empty else open_tasks
 
     overdue = open_tasks[
@@ -457,7 +481,6 @@ if page == "Dashboard":
     )
 
     st.write("")
-
     c1, c2 = st.columns([1.1, 0.9], gap="large")
 
     with c1:
@@ -604,11 +627,7 @@ elif page == "Deadlines & Tasks":
 
                     cA, cB = st.columns([0.82, 0.18])
                     with cA:
-                        is_done = st.checkbox(
-                            line1,
-                            value=bool(row["done"]),
-                            key=f"task_{row['id']}"
-                        )
+                        is_done = st.checkbox(line1, value=bool(row["done"]), key=f"task_{row['id']}")
                         if meta:
                             st.caption(" · ".join(meta))
                         if is_done != bool(row["done"]):
