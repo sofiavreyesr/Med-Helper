@@ -9,7 +9,7 @@ DB_PATH = "med_helper.db"
 st.set_page_config(page_title="Med Helper", page_icon="🩺", layout="wide")
 
 # =========================
-# CSS: Dark-Chrome-proof + Custom Top Bar
+# CSS: Dark-Chrome-proof + FIX TOP BAR (keep it visible)
 # =========================
 st.markdown(
     """
@@ -27,6 +27,8 @@ st.markdown(
         --card:#ffffff;
         --border: rgba(37, 99, 235, 0.18);
         --shadow: 0 10px 25px rgba(2, 8, 23, 0.08);
+
+        /* Prevent Chrome forced-dark weirdness */
         color-scheme: light;
       }
 
@@ -35,10 +37,33 @@ st.markdown(
         forced-color-adjust: none;
       }
 
-      /* Hide Streamlit header/top chrome (often turns black) */
-      header[data-testid="stHeader"]{ display:none !important; }
-      div[data-testid="stToolbar"]{ display:none !important; }
-      div[data-testid="stAppViewContainer"]{ padding-top: 0rem !important; }
+      /* ==========================
+         FIX STREAMLIT TOP BAR
+         (keep it visible + light)
+         ========================== */
+      header[data-testid="stHeader"]{
+        background: rgba(255,255,255,0.92) !important;
+        backdrop-filter: blur(8px) !important;
+        border-bottom: 1px solid rgba(37,99,235,0.18) !important;
+      }
+      /* Toolbar row (share, settings, etc.) */
+      div[data-testid="stToolbar"]{
+        background: transparent !important;
+      }
+      /* Make toolbar icons not invert to black */
+      header[data-testid="stHeader"] svg,
+      div[data-testid="stToolbar"] svg{
+        fill: var(--ink) !important;
+        color: var(--ink) !important;
+      }
+      header[data-testid="stHeader"] button,
+      div[data-testid="stToolbar"] button{
+        background: transparent !important;
+      }
+      /* Some Streamlit versions use this container */
+      div[data-testid="stDecoration"]{
+        background: transparent !important;
+      }
 
       /* App background */
       .stApp{
@@ -52,53 +77,29 @@ st.markdown(
         color: var(--ink) !important;
       }
 
-      /* ===== Custom top bar (VISIBLE) ===== */
-      .mh-topbar{
-        position: sticky;
-        top: 0;
-        z-index: 9999;
-        margin: 0 0 16px 0;
-        padding: 14px 18px;
-        border-radius: 0 0 18px 18px;
-        background: linear-gradient(135deg, rgba(37,99,235,0.98), rgba(59,130,246,0.96));
-        box-shadow: 0 10px 28px rgba(2,8,23,0.10);
-        border: 1px solid rgba(255,255,255,0.25);
-        backdrop-filter: blur(6px);
+      /* Header */
+      .mh-header{
+        padding: 18px 18px 14px 18px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+        color: #fff;
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        margin-bottom: 14px;
       }
-      .mh-topbar .row{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap: 12px;
-      }
-      .mh-topbar .brand{
-        display:flex;
-        align-items:center;
-        gap: 10px;
-      }
-      .mh-topbar .title{
-        font-size: 18px;
-        font-weight: 900;
-        color:#fff !important;
+      .mh-header h1{
+        font-size: 28px;
+        line-height: 1.15;
         margin: 0;
-        line-height: 1.1;
-      }
-      .mh-topbar .subtitle{
-        font-size: 12px;
-        color: rgba(255,255,255,0.90) !important;
-        margin: 2px 0 0 0;
-        line-height: 1.2;
-      }
-      .mh-topbar .chip{
-        display:inline-block;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.14);
-        border: 1px solid rgba(255,255,255,0.22);
-        color: rgba(255,255,255,0.92) !important;
-        font-size: 12px;
         font-weight: 800;
-        white-space: nowrap;
+        letter-spacing: 0.2px;
+        color: #fff !important;
+      }
+      .mh-header p{
+        margin: 6px 0 0 0;
+        opacity: 0.92;
+        font-size: 14px;
+        color: #fff !important;
       }
 
       /* Cards */
@@ -113,7 +114,7 @@ st.markdown(
         margin: 0 0 10px 0;
         color: var(--ink) !important;
         font-size: 16px;
-        font-weight: 900;
+        font-weight: 800;
       }
       .mh-meta{
         color: var(--muted) !important;
@@ -129,7 +130,7 @@ st.markdown(
         background: var(--blue-50) !important;
         border: 1px solid var(--blue-200);
         color: var(--blue-700) !important;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 12px;
         margin-right: 6px;
       }
@@ -149,11 +150,11 @@ st.markdown(
         border: 1px solid rgba(37,99,235,0.25) !important;
         background: linear-gradient(135deg, var(--blue-600), var(--blue-500)) !important;
         color: white !important;
-        font-weight: 900 !important;
+        font-weight: 800 !important;
         padding: 0.55rem 0.9rem !important;
       }
       .stButton>button:hover{
-        filter: brightness(1.02);
+        filter: brightness(0.98);
         border-color: rgba(37,99,235,0.38);
       }
 
@@ -163,7 +164,7 @@ st.markdown(
         border: 1px solid rgba(37,99,235,0.25) !important;
         background: linear-gradient(135deg, #0ea5e9, var(--blue-500)) !important;
         color: white !important;
-        font-weight: 900 !important;
+        font-weight: 800 !important;
         padding: 0.55rem 0.9rem !important;
       }
 
@@ -187,7 +188,10 @@ st.markdown(
       }
 
       /* KPI boxes */
-      .kpi{ display:flex; gap: 12px; }
+      .kpi{
+        display:flex;
+        gap: 12px;
+      }
       .kpi .box{
         flex: 1;
         border: 1px solid var(--border);
@@ -199,7 +203,7 @@ st.markdown(
       .kpi .label{
         color: var(--muted) !important;
         font-size: 12px;
-        font-weight: 800;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: .04em;
       }
@@ -207,7 +211,7 @@ st.markdown(
         margin-top: 6px;
         color: var(--ink) !important;
         font-size: 22px;
-        font-weight: 950;
+        font-weight: 900;
       }
 
       /* Dataframe */
@@ -221,7 +225,7 @@ st.markdown(
         background-color: #ffffff !important;
       }
 
-      /* Selectbox popover + listbox */
+      /* Selectbox + listbox */
       div[data-baseweb="select"] > div{
         background: #ffffff !important;
         border: 1px solid rgba(15, 23, 42, 0.25) !important;
@@ -241,17 +245,7 @@ st.markdown(
         color: var(--ink) !important;
       }
 
-      /* Form submit button */
-      div[data-testid="stFormSubmitButton"] button{
-        border-radius: 12px !important;
-        border: 1px solid rgba(37,99,235,0.25) !important;
-        background: linear-gradient(135deg, var(--blue-600), var(--blue-500)) !important;
-        color: #ffffff !important;
-        font-weight: 900 !important;
-        padding: 0.55rem 0.9rem !important;
-      }
-
-      /* Inline code styling (fix dark Chrome) */
+      /* Inline code pills */
       section[data-testid="stSidebar"] .stMarkdown code,
       section[data-testid="stSidebar"] code,
       .stMarkdown code,
@@ -261,12 +255,10 @@ st.markdown(
         border: 1px solid rgba(37, 99, 235, 0.25) !important;
         border-radius: 8px !important;
         padding: 0.12rem 0.35rem !important;
-        box-shadow: none !important;
-        filter: none !important;
         -webkit-text-fill-color: #0f172a !important;
       }
 
-      /* Number input stepper (+/-) */
+      /* Number input stepper */
       div[data-testid="stNumberInput"] button{
         background: #ffffff !important;
         color: #0f172a !important;
@@ -276,7 +268,7 @@ st.markdown(
         fill: #0f172a !important;
       }
 
-      /* DatePicker calendar fix */
+      /* DatePicker calendar force light */
       div[data-baseweb="popover"],
       div[data-baseweb="popover"] *{
         background: #ffffff !important;
@@ -299,31 +291,13 @@ st.markdown(
 )
 
 # =========================
-# CUSTOM TOP BAR (visible)
+# HEADER (same format you want)
 # =========================
-tasks_preview = None
-try:
-    conn = sqlite3.connect(DB_PATH)
-    tasks_preview = pd.read_sql_query("SELECT * FROM tasks", conn)
-    conn.close()
-except Exception:
-    tasks_preview = pd.DataFrame()
-
-open_count = int((tasks_preview["done"] == 0).sum()) if tasks_preview is not None and not tasks_preview.empty and "done" in tasks_preview.columns else 0
-
 st.markdown(
-    f"""
-    <div class="mh-topbar">
-      <div class="row">
-        <div class="brand">
-          <div style="font-size:20px; line-height:1;">🩺</div>
-          <div>
-            <div class="title">Med Helper</div>
-            <div class="subtitle">Deadlines + checklist + Anki drafts</div>
-          </div>
-        </div>
-        <div class="chip">Open tasks: {open_count}</div>
-      </div>
+    """
+    <div class="mh-header">
+      <h1>🩺 Med Helper</h1>
+      <p>Deadlines + checklist + Anki card drafts (fast, practical, no fluff)</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -529,7 +503,7 @@ if page == "Dashboard":
     with c2:
         st.markdown('<div class="mh-card">', unsafe_allow_html=True)
         st.markdown("<h3>✅ Today’s checklist</h3>", unsafe_allow_html=True)
-        st.markdown('<div class="muted">Shows tasks due today + tasks with no due date.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="mh-meta">Shows tasks due today + tasks with no due date.</div>', unsafe_allow_html=True)
         st.write("")
 
         if tasks.empty:
@@ -640,11 +614,7 @@ elif page == "Deadlines & Tasks":
 
                     cA, cB = st.columns([0.82, 0.18])
                     with cA:
-                        is_done = st.checkbox(
-                            line1,
-                            value=bool(row["done"]),
-                            key=f"task_{row['id']}"
-                        )
+                        is_done = st.checkbox(line1, value=bool(row["done"]), key=f"task_{row['id']}")
                         if meta:
                             st.caption(" · ".join(meta))
                         if is_done != bool(row["done"]):
