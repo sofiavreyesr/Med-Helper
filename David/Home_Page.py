@@ -9,12 +9,15 @@ DB_PATH = "med_helper.db"
 st.set_page_config(page_title="Med Helper", page_icon="🩺", layout="wide")
 
 # =========================
-# CSS: Dark-Chrome-proof
+# AESTHETIC + DARK-CHROME SAFE CSS
 # =========================
 st.markdown(
     """
     <style>
       :root{
+        --bg1:#f8fbff;
+        --bg2:#ffffff;
+
         --blue-50:#eff6ff;
         --blue-100:#dbeafe;
         --blue-200:#bfdbfe;
@@ -22,13 +25,16 @@ st.markdown(
         --blue-500:#3b82f6;
         --blue-600:#2563eb;
         --blue-700:#1d4ed8;
+
         --ink:#0f172a;
         --muted:#475569;
-        --card:#ffffff;
-        --border: rgba(37, 99, 235, 0.18);
-        --shadow: 0 10px 25px rgba(2, 8, 23, 0.08);
 
-        /* Prevent Chrome forced-dark weirdness */
+        --card:#ffffff;
+        --ring: rgba(59,130,246,0.18);
+        --border: rgba(15,23,42,0.10);
+        --shadow: 0 14px 34px rgba(2, 8, 23, 0.10);
+        --shadow2: 0 8px 20px rgba(2, 8, 23, 0.08);
+
         color-scheme: light;
       }
 
@@ -37,61 +43,108 @@ st.markdown(
         forced-color-adjust: none;
       }
 
-      /* App background */
+      /* Page background */
       .stApp{
-        background: radial-gradient(1200px 600px at 10% 0%, var(--blue-50) 0%, #ffffff 55%),
-                    radial-gradient(900px 500px at 90% 15%, var(--blue-100) 0%, #ffffff 45%);
+        background:
+          radial-gradient(1000px 520px at 12% -10%, rgba(59,130,246,.18), transparent 60%),
+          radial-gradient(900px 520px at 88% 8%, rgba(147,197,253,.26), transparent 60%),
+          linear-gradient(180deg, var(--bg1), var(--bg2));
         color: var(--ink) !important;
       }
 
-      /* Keep text readable everywhere */
-      .stApp, .stMarkdown, label, p, span, div, li{
+      /* Global text */
+      .stApp, .stMarkdown, label, p, span, div, li, small{
         color: var(--ink) !important;
       }
 
-      /* Header */
-      .mh-header{
-        padding: 18px 18px 14px 18px;
-        border: 1px solid var(--border);
-        background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
-        color: #fff;
-        border-radius: 18px;
+      /* Make main container a touch narrower (more premium) */
+      .block-container{
+        padding-top: 1.2rem;
+        padding-bottom: 2.3rem;
+        max-width: 1120px;
+      }
+
+      /* Header (hero) */
+      .mh-hero{
+        padding: 20px 22px;
+        border: 1px solid rgba(255,255,255,0.35);
+        background: linear-gradient(135deg, rgba(37,99,235,0.98), rgba(59,130,246,0.95));
+        border-radius: 22px;
         box-shadow: var(--shadow);
-        margin-bottom: 14px;
+        margin-bottom: 18px;
+        position: relative;
+        overflow: hidden;
       }
-      .mh-header h1{
-        font-size: 28px;
-        line-height: 1.15;
-        margin: 0;
-        font-weight: 800;
+      .mh-hero:after{
+        content:"";
+        position:absolute;
+        right:-140px;
+        top:-120px;
+        width:320px;
+        height:320px;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 60%);
+        transform: rotate(15deg);
+      }
+      .mh-hero h1{
+        margin:0;
+        font-weight: 900;
+        font-size: 30px;
         letter-spacing: 0.2px;
-        color: #fff !important;
+        color:#fff !important;
       }
-      .mh-header p{
+      .mh-hero p{
         margin: 6px 0 0 0;
-        opacity: 0.92;
+        color: rgba(255,255,255,0.92) !important;
         font-size: 14px;
-        color: #fff !important;
+        line-height: 1.35;
       }
 
       /* Cards */
       .mh-card{
         border: 1px solid var(--border);
         background: var(--card) !important;
-        border-radius: 18px;
-        padding: 16px 16px 14px 16px;
-        box-shadow: 0 6px 18px rgba(2, 8, 23, 0.06);
+        border-radius: 22px;
+        padding: 18px 18px 16px 18px;
+        box-shadow: var(--shadow2);
       }
       .mh-card h3{
-        margin: 0 0 10px 0;
-        color: var(--ink) !important;
+        margin: 0 0 12px 0;
         font-size: 16px;
-        font-weight: 800;
+        font-weight: 900;
+        letter-spacing: .2px;
       }
-      .mh-meta{
+      .muted{
         color: var(--muted) !important;
         font-size: 13px;
+        line-height: 1.35;
+      }
+
+      /* KPI row */
+      .kpi{
+        display:flex;
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+      .kpi .box{
+        flex: 1;
+        border: 1px solid var(--border);
+        background: #fff !important;
+        border-radius: 22px;
+        padding: 14px 14px;
+        box-shadow: var(--shadow2);
+      }
+      .kpi .label{
+        color: var(--muted) !important;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+      }
+      .kpi .value{
         margin-top: 6px;
+        color: var(--ink) !important;
+        font-size: 24px;
+        font-weight: 900;
       }
 
       /* Pills */
@@ -102,116 +155,90 @@ st.markdown(
         background: var(--blue-50) !important;
         border: 1px solid var(--blue-200);
         color: var(--blue-700) !important;
-        font-weight: 700;
+        font-weight: 800;
         font-size: 12px;
         margin-right: 6px;
       }
 
       /* Sidebar */
       section[data-testid="stSidebar"]{
-        background: linear-gradient(180deg, #ffffff 0%, var(--blue-50) 100%) !important;
-        border-right: 1px solid var(--border);
+        background: linear-gradient(180deg, #ffffff 0%, rgba(239,246,255,0.7) 100%) !important;
+        border-right: 1px solid rgba(15,23,42,0.08);
       }
       section[data-testid="stSidebar"] *{
         color: var(--ink) !important;
       }
 
-      /* Buttons */
-      .stButton>button{
-        border-radius: 12px !important;
-        border: 1px solid rgba(37,99,235,0.25) !important;
-        background: linear-gradient(135deg, var(--blue-600), var(--blue-500)) !important;
-        color: white !important;
-        font-weight: 800 !important;
-        padding: 0.55rem 0.9rem !important;
+      /* Buttons (primary) */
+      .stButton>button,
+      div[data-testid="stFormSubmitButton"] button{
+        border-radius: 14px !important;
+        border: 1px solid rgba(255,255,255,0.25) !important;
+        background: linear-gradient(135deg, rgba(37,99,235,0.98), rgba(59,130,246,0.96)) !important;
+        color: #ffffff !important;
+        font-weight: 900 !important;
+        padding: 0.62rem 1.0rem !important;
+        box-shadow: 0 10px 18px rgba(37,99,235,0.20);
+        transition: transform .08s ease, filter .12s ease;
       }
-      .stButton>button:hover{
-        filter: brightness(0.98);
-        border-color: rgba(37,99,235,0.38);
+      .stButton>button:hover,
+      div[data-testid="stFormSubmitButton"] button:hover{
+        filter: brightness(1.03);
+        transform: translateY(-1px);
       }
 
       /* Download button */
       .stDownloadButton>button{
-        border-radius: 12px !important;
-        border: 1px solid rgba(37,99,235,0.25) !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(14,165,233,0.35) !important;
         background: linear-gradient(135deg, #0ea5e9, var(--blue-500)) !important;
-        color: white !important;
-        font-weight: 800 !important;
-        padding: 0.55rem 0.9rem !important;
+        color: #fff !important;
+        font-weight: 900 !important;
+        padding: 0.62rem 1.0rem !important;
+        box-shadow: 0 10px 18px rgba(14,165,233,0.18);
       }
 
-      /* Inputs (force light bg + dark text) */
+      /* Inputs */
       input, textarea{
         background-color: #ffffff !important;
         color: var(--ink) !important;
         caret-color: var(--ink);
-        border-radius: 12px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(15,23,42,0.12) !important;
+        box-shadow: 0 1px 0 rgba(2,8,23,0.03);
       }
       .stDateInput input{
         background-color: #ffffff !important;
         color: var(--ink) !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
       }
-
-      /* Placeholders */
       ::placeholder{
         color: #64748b !important;
         opacity: 1;
       }
 
-      /* Checkbox text */
-      label span{
-        color: var(--ink) !important;
-      }
-
-      /* KPI boxes */
-      .kpi{
-        display:flex;
-        gap: 12px;
-      }
-      .kpi .box{
-        flex: 1;
-        border: 1px solid var(--border);
-        background: #fff !important;
-        border-radius: 18px;
-        padding: 14px 14px;
-        box-shadow: 0 6px 18px rgba(2, 8, 23, 0.06);
-      }
-      .kpi .label{
-        color: var(--muted) !important;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-      }
-      .kpi .value{
-        margin-top: 6px;
-        color: var(--ink) !important;
-        font-size: 22px;
-        font-weight: 900;
-      }
-
       /* Dataframe */
       div[data-testid="stDataFrame"]{
-        border-radius: 18px;
+        border-radius: 22px;
         overflow: hidden;
-        border: 1px solid var(--border);
+        border: 1px solid rgba(15,23,42,0.10);
+        box-shadow: var(--shadow2);
       }
       div[data-testid="stDataFrame"] *{
-        color: var(--ink) !important;
         background-color: #ffffff !important;
+        color: var(--ink) !important;
       }
 
-      /* ======================================
-         BaseWeb fixes: selectbox + submit button
-         ====================================== */
+      /* BaseWeb select */
       div[data-baseweb="select"] > div{
         background: #ffffff !important;
-        border: 1px solid rgba(15, 23, 42, 0.25) !important;
-        border-radius: 12px !important;
+        border: 1px solid rgba(15, 23, 42, 0.14) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 0 rgba(2,8,23,0.03);
       }
       div[data-baseweb="select"] span{
         color: var(--ink) !important;
+        font-weight: 700;
       }
       div[data-baseweb="select"] svg{
         color: var(--ink) !important;
@@ -220,38 +247,25 @@ st.markdown(
       ul[role="listbox"]{
         background: #ffffff !important;
         color: var(--ink) !important;
-        border: 1px solid rgba(15, 23, 42, 0.18) !important;
-        border-radius: 12px !important;
+        border: 1px solid rgba(15, 23, 42, 0.12) !important;
+        border-radius: 14px !important;
+        box-shadow: var(--shadow2);
       }
       ul[role="listbox"] li{
         background: #ffffff !important;
         color: var(--ink) !important;
       }
 
-      div[data-testid="stFormSubmitButton"] button{
-        border-radius: 12px !important;
-        border: 1px solid rgba(37,99,235,0.25) !important;
-        background: linear-gradient(135deg, var(--blue-600), var(--blue-500)) !important;
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        padding: 0.55rem 0.9rem !important;
-      }
-
-      /* ======================================
-         FINAL OVERRIDES FOR DARK CHROME
-         (inline code, datepicker, number input)
-         ====================================== */
-
-      /* Inline `code` in sidebar + app */
+      /* Inline `code` (sidebar + main) */
       section[data-testid="stSidebar"] .stMarkdown code,
       section[data-testid="stSidebar"] code,
       .stMarkdown code,
       li code, p code, span code{
-        background-color: #eef2ff !important;
+        background-color: rgba(59,130,246,0.10) !important;
         color: #0f172a !important;
-        border: 1px solid rgba(37, 99, 235, 0.25) !important;
-        border-radius: 8px !important;
-        padding: 0.12rem 0.35rem !important;
+        border: 1px solid rgba(59,130,246,0.18) !important;
+        border-radius: 10px !important;
+        padding: 0.12rem 0.38rem !important;
         box-shadow: none !important;
         filter: none !important;
         -webkit-text-fill-color: #0f172a !important;
@@ -261,41 +275,38 @@ st.markdown(
       div[data-testid="stNumberInput"] button{
         background: #ffffff !important;
         color: #0f172a !important;
-        border: 1px solid rgba(15,23,42,0.18) !important;
+        border: 1px solid rgba(15,23,42,0.14) !important;
+        border-radius: 12px !important;
       }
       div[data-testid="stNumberInput"] button svg{
         fill: #0f172a !important;
       }
 
-      /* ===== FORCE BaseWeb DatePicker calendar to light ===== */
+      /* Force BaseWeb DatePicker calendar to light */
       div[data-baseweb="popover"],
       div[data-baseweb="popover"] *{
         background: #ffffff !important;
         color: #0f172a !important;
       }
-
       div[data-baseweb="calendar"],
       div[data-baseweb="calendar"] *{
         background: #ffffff !important;
         color: #0f172a !important;
       }
-
-      div[data-baseweb="calendar"] [role="row"],
-      div[data-baseweb="calendar"] [role="row"] *{
-        background: #ffffff !important;
-        color: #0f172a !important;
-      }
-
       div[data-baseweb="calendar"] [role="gridcell"],
       div[data-baseweb="calendar"] [role="gridcell"] *{
         background: #ffffff !important;
         color: #0f172a !important;
       }
-
       div[data-baseweb="calendar"] svg,
       div[data-baseweb="popover"] svg{
         fill: #0f172a !important;
         color: #0f172a !important;
+      }
+
+      /* Make radio/checkbox labels tighter */
+      label{
+        line-height: 1.2 !important;
       }
 
     </style>
@@ -304,11 +315,11 @@ st.markdown(
 )
 
 # =========================
-# HEADER
+# HERO HEADER
 # =========================
 st.markdown(
     """
-    <div class="mh-header">
+    <div class="mh-hero">
       <h1>🩺 Med Helper</h1>
       <p>Deadlines + checklist + Anki card drafts (fast, practical, no fluff)</p>
     </div>
@@ -317,7 +328,7 @@ st.markdown(
 )
 
 # =========================
-# DB FUNCTIONS
+# DB
 # =========================
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -411,7 +422,7 @@ def make_cloze_cards(lines):
                 candidates.append(w)
             elif len(w) >= 8:
                 candidates.append(w)
-        candidates = list(dict.fromkeys(candidates))
+        candidates = list(dict.fromkeys(candidates))  # unique, keep order
         clozed = ln
         for i, term in enumerate(candidates[:2], start=1):
             clozed = re.sub(rf"\\b{re.escape(term)}\\b", f"{{{{c{i}::{term}}}}}", clozed, count=1)
@@ -706,4 +717,7 @@ else:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='muted'>Tip: Keep the file <code>med_helper.db</code> in the same folder so tasks stay saved.</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='muted'>Tip: Keep the file <code>med_helper.db</code> in the same folder so tasks stay saved.</div>",
+    unsafe_allow_html=True
+)
